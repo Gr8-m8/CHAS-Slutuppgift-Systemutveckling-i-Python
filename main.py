@@ -217,6 +217,7 @@ class Menu:
                 [Menu.alarm_set, ['3', "set alarm", 'sa'], "Set Alarm"],
                 [Menu.alarm_list, ['4', "list alarm", "la"], "List Alarm"],
                 [Menu.monitor_display, ['5', "start monitor display", "smd"], "Start Monitor Display"],
+                [Menu.alarm_remove, ["6"], "Remove Alarm"]
             ]
         self.menu("Main Menu", cmds)
 
@@ -249,7 +250,7 @@ class Menu:
         text.option("CPU",  f"{cpu[2]}%"+ "\t{cpu}")
         text.option("RAM",  f"{ram[0].percent}%"+ "\t{ram}")
         text.option("DISK", f"{disk[-1].percent}%"+ "\t{disk}")
-        text.input("Any key to Continue...")
+        text.input("Enter key to Continue...")
 
     #set alarm thresholds
     def alarm_set(self):
@@ -282,8 +283,29 @@ class Menu:
         self.menu("Alarm Set", cmds)
 
     def alarm_remove(self):
+        def index_input(alarms):
+            index = text.input(f"Alarm get: 0-{len(alarms)-1}")
+            if index.isdigit():
+                if 0 <= int(index) <= len(alarms)-1:
+                    alarm = alarms[int(index)]
+                    return [text.text(f"Alarm {index} Removed, [{alarm[0]}: {alarm[1]}%]"), alarm]
+                else:
+                    return [text.fail(f"Input is outside range 0-{len(alarms)-1}", f"{index}"), None]
+            else:
+                return [text.fail(f"Input is not a number", f"{index}"), None]
+            
+        def remove(self):
+            items = monitor.alarm_list()
+            [text.option(items.index(item), f"{item[0]}: {item[1]}%") for item in items]
+            status, alarm = index_input(monitor.alarm_list())
+            logger.appendlog(logger.path_action, status)
+            if len(alarm)>0:
+                monitor.alarm_remove(alarm)
+                Menu.retur(self)
+
         cmds = [
             [Menu.retur, ["0", "return", "r", "x"], "Return"],
+            [remove, ["1", "ra", "remove", "remov alarm"], "Remove Alarm"],
         ]
         self.menu("Remove Alarm", cmds)
 
@@ -292,7 +314,7 @@ class Menu:
         logger.appendlog(logger.path_action, text.title("List Alarm"))
         items = monitor.alarm_list()
         [text.option(items.index(item), f"{item[0]}: {item[1]}%") for item in items]
-        text.input("Any key to Continue...")
+        text.input("Enter key to Continue...")
 
     #start monitor display
     def monitor_display(self):
