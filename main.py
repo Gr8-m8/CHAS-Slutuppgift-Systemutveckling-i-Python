@@ -58,6 +58,7 @@ class text:
         if content or content != "":
             content +='\n'
         print(f"{text.YELLOW}"); contentout = input(f"{content}> ").lower(); print(f"{text.END}")
+        text.clear()
         return contentout
     
     #print error and reason
@@ -65,6 +66,12 @@ class text:
     def fail(content = "", contentfail = ""):
         print(f"{content}: '{text.RED}{text.UNDERLINE}{contentfail}{text.END}'")
         return f"{content}: '{contentfail}'"
+    
+    @staticmethod
+    def clear():
+        CLEARACTIVE = True
+        if CLEARACTIVE:
+            os.system('cls')
 
 #simplify log prints
 class Logger:
@@ -98,29 +105,36 @@ class Monitor:
 #main menu
 class Menu_Main:
     def __init__(self):
-        self.cmds = Menu_Main.cmdsf()
 
         self.main()
 
     def main(self):
         try:
-            main_loop=True
-            while(main_loop):
+            cmds = [
+                [Menu_Main.exit, ['0', "exit", "e", "x"]],
+                [Menu_Main.start_monitor, ['1', "start monitor"]],
+                [Menu_Main.list_monitor, ['2', "monitor list", "ml"]],
+                [Menu_Main.set_alarm, ['3', "set alarm", 'sa']],
+                [Menu_Main.list_alarm, ['4', "list alarm", "la"]],
+                [Menu_Main.start_monitor_display, ['5', "start monitor display", "smd"]]
+            ]
+            main_loop_active=True
+            while(main_loop_active):
                 logger.appendlog(logger.path_action, text.title("Menu"))
                 text.option(1, "Start Monitor")
                 text.option(2, "Monitor List")
                 text.option(3, "Set Alarm")
                 text.option(4, "List Alarm")
-                text.option(5, "Start Monitor Mode")
+                text.option(5, "Start Monitor Display")
                 text.option(0, "Exit")
                 cmd = text.input()
                 logger.appendlog(logger.path_action, f"> {cmd}")
                 
                 cmd_activate=False
-                for i in range(len(self.cmds)):
-                    if cmd in self.cmds[i][1]:
+                for i in range(len(cmds)):
+                    if cmd in cmds[i][1]:
                         cmd_activate = True
-                        self.cmds[i][0](self)
+                        cmds[i][0](self)
 
                 if not cmd_activate:
                     logger.appendlog(logger.path_action, text.fail("Invalid option", cmd))
@@ -147,26 +161,24 @@ class Menu_Main:
 
     def list_monitor(self):
         logger.appendlog(logger.path_action, text.title("List Monitor"))
+        cpu = [psutil.cpu_count(), psutil.cpu_freq() ,psutil.cpu_percent(), psutil.cpu_stats(), psutil.cpu_times(), psutil.cpu_times_percent()]
+        ram = [psutil.swap_memory(), psutil.virtual_memory()]
+        disk = [psutil.disk_io_counters(), psutil.disk_partitions(), psutil.disk_usage("C:")]
+        text.option("CPU",  f"{cpu[2]}% \t{cpu}")
+        text.option("RAM",  f"{ram[0].percent}% \t{ram}")
+        text.option("DISK", f"{disk[-1].percent}% \t{disk}")
+        text.input("Any key to Continue...")
 
     def set_alarm(self):
-        logger.appendlog(logger.path_action, text.title("Set Alarm"))
+        set_alarm_loop_active = True
+        while set_alarm_loop_active:
+            logger.appendlog(logger.path_action, text.title("Set Alarm"))
 
     def list_alarm(self):
         logger.appendlog(logger.path_action, text.title("Lsit Alarm"))
 
     def start_monitor_display(self):
         logger.appendlog(logger.path_action, text.title("Start Monitor Display"))
-    
-    @staticmethod
-    def cmdsf():
-        return [
-        [Menu_Main.exit, ['0', "exit", "e", "x"]],
-        [Menu_Main.start_monitor, ['1', "start monitor"]],
-        [Menu_Main.list_monitor, ['2', "monitor list", "ml"]],
-        [Menu_Main.set_alarm, ['3', "set alarm", 'sa']],
-        [Menu_Main.list_alarm, ['4', "list alarm", "la"]],
-        [Menu_Main.start_monitor_display, ['5', "start monitor display", "smd"]]
-        ]
 
 saver = Saver()
 logger = Logger()
