@@ -3,4 +3,5 @@ task.txt
 /__pycache__
 *.pyc
 /build
-*.bat
+/dist
+*.spec
