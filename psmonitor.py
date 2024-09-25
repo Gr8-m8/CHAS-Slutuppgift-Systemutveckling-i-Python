@@ -44,17 +44,29 @@ class Monitor:
         #            alarms[alarmindex] = alarm
         valueindex = 1
         alarmindex = 0
-        for alarm in self.alarms[alarmkeys[alarmindex]]:
-            if float(cpu) > float(alarm[valueindex]) and float(alarms[alarmindex][valueindex] < float(alarm[valueindex])):
-                alarms[alarmindex] = alarm 
+        if cpu:
+            try:
+                for alarm in self.alarms[alarmkeys[alarmindex]]:
+                    if float(cpu) > float(alarm[valueindex]) and float(alarms[alarmindex][valueindex] < float(alarm[valueindex])):
+                        alarms[alarmindex] = alarm 
+            except:
+                pass
         alarmindex = 1
-        for alarm in self.alarms[alarmkeys[alarmindex]]:
-            if float(cpu) > float(alarm[valueindex]) and float(alarms[alarmindex][valueindex] < float(alarm[valueindex])):
-                alarms[alarmindex] = alarm 
+        if ram:
+            try:
+                for alarm in self.alarms[alarmkeys[alarmindex]]:
+                    if float(ram.percent) > float(alarm[valueindex]) and float(alarms[alarmindex][valueindex] < float(alarm[valueindex])):
+                        alarms[alarmindex] = alarm 
+            except:
+                pass
         alarmindex = 2
-        for alarm in self.alarms[alarmkeys[alarmindex]]:
-            if float(cpu) > float(alarm[valueindex]) and float(alarms[alarmindex][valueindex] < float(alarm[valueindex])):
-                alarms[alarmindex] = alarm 
+        if disk:
+            try:
+                for alarm in self.alarms[alarmkeys[alarmindex]]:
+                    if float(disk.percent) > float(alarm[valueindex]) and float(alarms[alarmindex][valueindex] < float(alarm[valueindex])):
+                        alarms[alarmindex] = alarm 
+            except:
+                pass
 
         return alarms
 
