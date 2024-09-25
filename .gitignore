@@ -4,4 +4,6 @@ task.txt
 *.pyc
 
 /build
+/dist
 /dist/data
+*.spec
