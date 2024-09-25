@@ -63,13 +63,14 @@ class Menu_Display:
         #percent number input
         def prc_input(title):
             prc = text.input(f"{title} Alarm set: (%) 0-100")
-            if prc.isdigit():
-                if 0 <= int(prc) <= 100:
+            try: #if prc.isdigit():
+                prc = float(prc)
+                if 0 <= float(prc) <= 100:
                     monitor.alarm_add([title, prc])
                     return text.text(f"{title} Alarm set for {prc}%")
                 else:
                     return text.fail("Input is outside range 0-100", f"{prc}")
-            else:
+            except: #else
                 return text.fail("Input is not a number", f"{prc}")
 
         #menu command functions
@@ -136,7 +137,6 @@ class Menu_Display:
             alarms = monitor.monitor_snapshot_alarm_list()
             
             text.clear()
-            print(f"{alarms}")
             text.option("CPU",  f"{cpu}%")
             text.option("RAM",  f"{ram.percent}%")
             text.option("DISK", f"{disk.percent}%")
