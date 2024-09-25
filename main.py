@@ -3,6 +3,7 @@ from logger import Logger
 from psmonitor import Monitor
 from menu import Menu
 import time
+import keyboard
 
 #main menu
 class Menu_Display:
@@ -147,6 +148,9 @@ class Menu_Display:
             text.nl()
             text.text("Enter key to Continue...")
             time.sleep(interval)
+            event = keyboard.read_event()
+            if event.event_type == keyboard.KEY_DOWN:
+                monitor_display_active = False
 
         text.clear()    
 
