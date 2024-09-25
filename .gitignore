@@ -1,2 +1,4 @@
 /data
 task.txt
+/__pycache__
+*.pyc

@@ -6,10 +6,11 @@ class Logger:
         self.LOGACTIVE = True
         self.session = Logger.datetime()
         self.path_action = f"data/log/{self.session} action.log"
+        #self.path_
         
         if self.LOGACTIVE:
             open(file=self.path_action, mode="x")
-        #self.path_
+        
 
     #add to logfile
     def appendlog(self, path, content):

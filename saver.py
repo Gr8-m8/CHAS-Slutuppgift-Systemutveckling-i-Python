@@ -2,10 +2,8 @@ import json
 
 #simplify json save/load
 class Saver:
-    def __init__(self):
-        pass
-
     PATH_ALARMS = f"data/save/alarms.json"
+    
     def save(self, path, content):
         try:
             open(path, "x")
