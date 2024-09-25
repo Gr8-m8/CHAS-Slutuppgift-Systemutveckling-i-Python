@@ -1,3 +1,4 @@
+import os
 import datetime
 
 #simplify log prints
@@ -7,7 +8,7 @@ class Logger:
         self.session = Logger.datetime()
         self.path_action = f"data/log/{self.session} action.log"
         #self.path_
-        
+        os.makedirs("data/log", exist_ok=True)
         if self.LOGACTIVE:
             open(file=self.path_action, mode="x")
         

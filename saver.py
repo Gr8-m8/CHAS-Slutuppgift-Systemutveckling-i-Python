@@ -1,7 +1,11 @@
 import json
+import os
 
 #simplify json save/load
 class Saver:
+    def __init__(self):
+        os.makedirs("data/save", exist_ok=True)
+
     PATH_ALARMS = f"data/save/alarms.json"
     
     def save(self, path, content):
