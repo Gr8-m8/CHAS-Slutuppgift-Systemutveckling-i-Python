@@ -1,1 +1,2 @@
-Run main.py
+exec main.py
+require pip install: keyboard, psutil
