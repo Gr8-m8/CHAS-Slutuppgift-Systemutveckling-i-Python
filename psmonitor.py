@@ -24,12 +24,39 @@ class Monitor:
         self.monitor = True
         return self.monitor
 
-    def monitor_list(self):
+    def monitor_snapshot_list(self):
         #get psutil data
-        cpu = [psutil.cpu_count(), psutil.cpu_freq() ,psutil.cpu_percent(), psutil.cpu_stats(), psutil.cpu_times(), psutil.cpu_times_percent()]
-        ram = [psutil.swap_memory(), psutil.virtual_memory()]
-        disk = [psutil.disk_io_counters(), psutil.disk_partitions(), psutil.disk_usage("C:")]
-        return [cpu, ram, disk]
+        if self.monitor:
+            cpu = psutil.cpu_percent() #[psutil.cpu_count(), psutil.cpu_freq() ,psutil.cpu_percent(), psutil.cpu_stats(), psutil.cpu_times(), psutil.cpu_times_percent()]
+            ram = psutil.swap_memory() #[psutil.swap_memory(), psutil.virtual_memory()]
+            disk = psutil.disk_usage("C:") #[psutil.disk_io_counters(), psutil.disk_partitions(), psutil.disk_usage("C:")]
+            return [cpu, ram, disk]
+        return [None, None, None]
+    
+    def monitor_snapshot_alarm_list(self):
+        alarms = [[self.KEY_CPU, -1], [self.KEY_RAM, -1], [self.KEY_DISK, -1]]
+        alarmkeys = [self.KEY_CPU, self.KEY_RAM, self.KEY_DISK]
+        cpu, ram, disk = self.monitor_snapshot_list()
+        
+        #for alarmindex in range(len(alarmkeys)):
+        #    for alarm in self.alarms[alarmkeys[alarmindex]]:
+        #        if float(cpu) > float(alarm[1]) and float(alarms[alarmindex][1] < float(alarm[1])):
+        #            alarms[alarmindex] = alarm
+        valueindex = 1
+        alarmindex = 0
+        for alarm in self.alarms[alarmkeys[alarmindex]]:
+            if float(cpu) > float(alarm[valueindex]) and float(alarms[alarmindex][valueindex] < float(alarm[valueindex])):
+                alarms[alarmindex] = alarm 
+        alarmindex = 1
+        for alarm in self.alarms[alarmkeys[alarmindex]]:
+            if float(cpu) > float(alarm[valueindex]) and float(alarms[alarmindex][valueindex] < float(alarm[valueindex])):
+                alarms[alarmindex] = alarm 
+        alarmindex = 2
+        for alarm in self.alarms[alarmkeys[alarmindex]]:
+            if float(cpu) > float(alarm[valueindex]) and float(alarms[alarmindex][valueindex] < float(alarm[valueindex])):
+                alarms[alarmindex] = alarm 
+
+        return alarms
 
     def alarm_add(self, alarm):
         self.alarms[alarm[0]].append(alarm)
@@ -45,7 +72,9 @@ class Monitor:
         return self.alarms[self.KEY_CPU]+self.alarms[self.KEY_RAM]+self.alarms[self.KEY_DISK]
     
     def monitor_display(self):
-        pass
+        cpu = psutil.cpu_percent()
+        ram = psutil.swap_memory()
+        disk = psutil.disk_usage("C:")
 
     KEY_CPU = 'CPU'
     KEY_RAM = 'RAM'
