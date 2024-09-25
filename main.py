@@ -4,6 +4,11 @@ from psmonitor import Monitor
 from menu import Menu
 import time
 import keyboard
+import psutil
+import os
+import datetime
+import json
+
 
 #main menu
 class Menu_Display:
