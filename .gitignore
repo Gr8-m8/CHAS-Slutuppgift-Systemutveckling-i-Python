@@ -2,5 +2,6 @@
 task.txt
 /__pycache__
 *.pyc
+
 /build
 /dist/data
