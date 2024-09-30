@@ -5,5 +5,4 @@ task.txt
 
 /build
 /dist
-/dist/data
 *.spec
