@@ -1,7 +1,7 @@
 import psutil
 import time
-from textefficiency import text
-from saver import Saver
+from lib.textefficiency import text
+from lib.saver import Saver
 
 saver = Saver()
 #manage program functions

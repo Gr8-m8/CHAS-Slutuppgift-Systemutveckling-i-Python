@@ -1,1 +1,1 @@
-venv\Scripts\python.exe -m PyInstaller main.py -n "Monitor" --onefile --collect-submodules "logger.py" --collect-submodules "menu.py" --collect-submodules "psmonitor.py" --collect-submodules "saver.py" --collect-submodules "textefficiency.py"
+venv\Scripts\python.exe -m PyInstaller main.py -n "Monitor" --onefile --collect-submodules "lib.logger.py" --collect-submodules "lib.menu.py" --collect-submodules "lib.psmonitor.py" --collect-submodules "lib.saver.py" --collect-submodules "lib.textefficiency.py"

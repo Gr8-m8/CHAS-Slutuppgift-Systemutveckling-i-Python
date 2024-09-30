@@ -1,4 +1,4 @@
-from textefficiency import text
+from lib.textefficiency import text
 
 class Menu:
     def __init__(self, logger, menu_display, title):

@@ -1,7 +1,7 @@
-from textefficiency import text
-from logger import Logger
-from psmonitor import Monitor
-from menu import Menu
+from lib.textefficiency import text
+from lib.logger import Logger
+from lib.psmonitor import Monitor
+from lib.menu import Menu
 import time
 import os
 import datetime
