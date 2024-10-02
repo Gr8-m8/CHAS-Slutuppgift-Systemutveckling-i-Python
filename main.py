@@ -2,6 +2,7 @@ from lib.textefficiency import text
 from lib.logger import Logger
 from lib.psmonitor import Monitor
 from lib.menu import Menu
+from lib.gui import Gui
 import time
 import os
 import datetime
@@ -19,9 +20,10 @@ class Menu_Display:
         self.menu_alarm_set = Menu(logger, self, "Set Alarm")
         self.menu_alarm_remove = Menu(logger, self, "Remove Alarm")
         self.menu_monitor = Menu(logger, self, "Monitor Display")
+        self.Gui = Gui
 
     #main menu
-    def main(self):
+    def main(self, gui = True):
         cmds = [
                 [self.menu_main.retur, ['0', "exit", "e", "x"], "Exit"],
                 [Menu_Display.monitor_start, ['1', "start monitor"], "Start Monitor"],
@@ -31,14 +33,17 @@ class Menu_Display:
                 [Menu_Display.monitor_display, ['5', "start monitor display", "smd"], "Start Monitor Display"],
                 [Menu_Display.alarm_remove, ["6"], "Remove Alarm"]
             ]
-        self.menu_main.menu(cmds)
+        if gui:
+            self.Gui(self, monitor, logger)
+        else:
+            self.menu_main.menu(cmds)
 
     #activate monitor
     def monitor_start(self):
         logger.appendlog(logger.path_action, text.title("Start Monitor"))
         #test if monitor mode already ON
         if not monitor.monitor:
-            monitor.monitor = True
+            monitor.monitor_start()
             logger.appendlog(logger.path_action, "Monitor Mode ON")
             text.text(f"Monitor Mode: {text.GREEN}ON{text.END}")
             text.input("Enter key to Continue...")
