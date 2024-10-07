@@ -170,4 +170,4 @@ logger = Logger()
 monitor = Monitor()
 menu = Menu_Display()
 
-menu.main()
+menu.main(gui=True)
