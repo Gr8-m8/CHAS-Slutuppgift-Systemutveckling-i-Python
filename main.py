@@ -6,7 +6,6 @@ import time
 import os
 import datetime
 import json
-import keyboard
 import psutil
 
 
@@ -24,12 +23,12 @@ class Menu_Display:
     def main(self):
         cmds = [
                 [self.menu_main.retur, ['0', "exit", "e", "x"], "Exit"],
-                [Menu_Display.monitor_start, ['1', "start monitor"], "Start Monitor"],
-                [Menu_Display.monitor_list, ['2', "monitor list", "ml"], "Monitor List"],
-                [Menu_Display.alarm_set, ['3', "set alarm", 'sa'], "Set Alarm"],
-                [Menu_Display.alarm_list, ['4', "list alarm", "la"], "List Alarm"],
-                [Menu_Display.monitor_display, ['5', "start monitor display", "smd"], "Start Monitor Display"],
-                [Menu_Display.alarm_remove, ["6"], "Remove Alarm"]
+                [Menu_Display.monitor_start, ['1', "start monitor", "!"], "Start Monitor"],
+                [Menu_Display.monitor_list, ['2', "monitor list", "ml", "."], "Monitor List"],
+                [Menu_Display.alarm_set, ['3', "set alarm", 'sa', "+"], "Set Alarm"],
+                [Menu_Display.alarm_list, ['4', "list alarm", "la"], "=", "List Alarm"],
+                [Menu_Display.monitor_display, ['5', "start monitor display", "smd", "*"], "Start Monitor Display"],
+                [Menu_Display.alarm_remove, ["6", "remove alarm", "ra", "-"], "Remove Alarm"]
             ]
         self.menu_main.menu(cmds)
 
@@ -41,10 +40,10 @@ class Menu_Display:
             monitor.monitor = True
             logger.appendlog(logger.path_action, "Monitor Mode ON")
             text.text(f"Monitor Mode: {text.GREEN}ON{text.END}")
-            text.input("Enter key to Continue...")
+            text.input("Enter key to Return...")
         else:
             logger.appendlog(logger.path_action, text.fail("Start Monitor Failed", "Monitor Mode already ON"))
-            text.input("Enter key to Continue...")
+            text.input("Enter key to Return...")
             
         text.nl()
 
@@ -127,7 +126,7 @@ class Menu_Display:
         logger.appendlog(logger.path_action, text.title("List Alarm"))
         items = monitor.alarm_list()
         [text.option(items.index(item), f"{item[0]}: {item[1]}%") for item in items]
-        text.input("Enter key to Continue...")
+        text.input("Enter key to Return...")
 
     #start monitor display
     def monitor_display(self):
@@ -140,22 +139,25 @@ class Menu_Display:
         #monitor.monitor_display()
         monitor_display_active = True
         while(monitor_display_active):
-            cpu, ram, disk = monitor.monitor_snapshot_list()
-            alarms = monitor.monitor_snapshot_alarm_list()
-            
-            text.clear()
-            text.option("CPU",  f"{cpu}%")
-            text.option("RAM",  f"{ram.percent}%")
-            text.option("DISK", f"{disk.percent}%")
-            
-            for alarm in alarms:
-                if float(alarm[1])>0:
-                    text.fail("Alarm Triggered", f"{alarm[0]}: {alarm[1]}")
-            text.nl()
-            text.text("Enter key to Continue...")
-            time.sleep(interval)
-            event = keyboard.read_event()
-            if event.event_type == keyboard.KEY_DOWN:
+            try:
+                cpu, ram, disk = monitor.monitor_snapshot_list()
+                alarms = monitor.monitor_snapshot_alarm_list()
+                
+                text.clear()
+                text.option("CPU",  f"{cpu}%")
+                text.option("RAM",  f"{ram.percent}%")
+                text.option("DISK", f"{disk.percent}%")
+                
+                for alarm in alarms:
+                    if float(alarm[1])>0:
+                        text.fail("Alarm Triggered", f"{alarm[0]}: {alarm[1]}")
+                text.nl()
+                text.text(f"{text.YELLOW}[Ctrl+C] to Return...{text.END}")
+                time.sleep(interval)
+                #event = keyboard.read_event()
+                #if event.event_type == keyboard.KEY_DOWN:
+                #    monitor_display_active = False
+            except KeyboardInterrupt:
                 monitor_display_active = False
 
         text.clear()    
