@@ -81,7 +81,10 @@ class Monitor:
         return alarm
 
     def alarm_list(self):
-        return self.alarms[self.KEY_CPU]+self.alarms[self.KEY_RAM]+self.alarms[self.KEY_DISK]
+        alarms = self.alarms[self.KEY_CPU]+self.alarms[self.KEY_RAM]+self.alarms[self.KEY_DISK]
+        alarms.sort(key=lambda item: item[1])
+        alarms.sort(key=lambda item: item[0])
+        return alarms
     
     def monitor_display(self):
         cpu = psutil.cpu_percent()
