@@ -30,6 +30,7 @@ class text:
     #clear console
     @staticmethod
     def clear():
+        print(text.END)
         CLEARACTIVE = True
         if CLEARACTIVE:
             os.system('cls')
@@ -44,7 +45,11 @@ class text:
     def input(content = ""):
         if content or content != "":
             content +='\n'
-        print(f"{text.YELLOW}"); contentout = input(f"{content}> ").lower(); print(f"{text.END}")
+        try:
+            print(f"{text.YELLOW}"); contentout = input(f"{content}> ").lower(); print(f"{text.END}")
+        except KeyboardInterrupt:
+            print(f"{text.END}")
+            contentout = "0"
         text.clear()
         return contentout
     
