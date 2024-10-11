@@ -19,6 +19,7 @@ class Logger:
             log = open(path, "a")
             log.write(f"[{Logger.datetime()}] {content}\n")
             log.close()
+        return content
 
     #formated date time str
     @staticmethod

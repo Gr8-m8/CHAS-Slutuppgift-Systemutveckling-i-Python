@@ -100,7 +100,7 @@ class Menu_Display:
             if index.isdigit():
                 if 0 <= int(index) <= len(alarms)-1:
                     alarm = alarms[int(index)]
-                    return [text.text(f"Alarm {index} Removed, [{alarm[0]}: {alarm[1]}%]"), alarm]
+                    return  logger.appendlog(logger.path_action, [text.text(f"Alarm {index} Removed, [{alarm[0]}: {alarm[1]}%]"), alarm])
                 else:
                     return [text.fail(f"Input is outside range 0-{len(alarms)-1}", f"{index}"), ""]
             else:
@@ -135,6 +135,7 @@ class Menu_Display:
             logger.appendlog(logger.path_action, text.fail(f"Monitor Mode is", "OFF"))
             return
         
+        timer = 0
         interval = 0.5
         #monitor.monitor_display()
         monitor_display_active = True
@@ -144,23 +145,27 @@ class Menu_Display:
                 alarms = monitor.monitor_snapshot_alarm_list()
                 
                 text.clear()
+                text.text(f"Time: {timer}")
                 text.option("CPU",  f"{cpu}%")
                 text.option("RAM",  f"{ram.percent}%")
                 text.option("DISK", f"{disk.percent}%")
                 
                 for alarm in alarms:
                     if float(alarm[1])>0:
-                        text.fail("Alarm Triggered", f"{alarm[0]}: {alarm[1]}")
+                        logger.appendlog(logger.path_action, text.fail("Alarm Triggered", f"{alarm[0]}: {alarm[1]}"))
                 text.nl()
                 text.text(f"{text.YELLOW}[Ctrl+C] to Return...{text.END}")
                 time.sleep(interval)
+                timer += interval
                 #event = keyboard.read_event()
                 #if event.event_type == keyboard.KEY_DOWN:
                 #    monitor_display_active = False
             except KeyboardInterrupt:
                 monitor_display_active = False
+                logger.appendlog(logger.path_action, f"Monitor Time: {timer}")
+                text.clear()
 
-        text.clear()    
+        text.clear() 
 
 #set up main classes
 logger = Logger()
