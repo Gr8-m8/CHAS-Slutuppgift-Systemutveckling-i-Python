@@ -22,7 +22,7 @@ class Menu_Display:
     #main menu
     def main(self):
         cmds = [
-                [self.menu_main.retur, ['0', "exit", "e", "x"], "Exit"],
+                [self.menu_main.retur, ['0', "", "exit", "e", "x"], "Exit"],
                 [Menu_Display.monitor_start, ['1', "start monitor", "!"], "Start Monitor"],
                 [Menu_Display.monitor_list, ['2', "monitor list", "ml", "."], "Monitor List"],
                 [Menu_Display.alarm_set, ['3', "set alarm", 'sa', "+"], "Set Alarm"],
@@ -87,7 +87,7 @@ class Menu_Display:
         def disk_alarm(self):
             logger.appendlog(logger.path_action,prc_input(monitor.KEY_DISK))
         cmds = [
-            [self.menu_alarm_set.retur, ["0", "return", "r", "x"], "Return"],
+            [self.menu_alarm_set.retur, ["0", "", "return", "r", "x"], "Return"],
             [cpu_alarm, ["1", "cpu", "cpu alarm"], "CPU Alarm"],
             [ram_alarm, ["2", "ram", "ram alarm"], "RAM Alarm"],
             [disk_alarm, ["3", "disk", "disk alarm"], "Disk Alarm"],
@@ -100,7 +100,7 @@ class Menu_Display:
             if index.isdigit():
                 if 0 <= int(index) <= len(alarms)-1:
                     alarm = alarms[int(index)]
-                    return  logger.appendlog(logger.path_action, [text.text(f"Alarm {index} Removed, [{alarm[0]}: {alarm[1]}%]"), alarm])
+                    return  [text.text(f"Alarm {index} Removed, [{alarm[0]}: {alarm[1]}%]"), alarm]
                 else:
                     return [text.fail(f"Input is outside range 0-{len(alarms)-1}", f"{index}"), ""]
             else:
@@ -113,11 +113,11 @@ class Menu_Display:
             logger.appendlog(logger.path_action, status)
             if len(alarm)>0:
                 monitor.alarm_remove(alarm)
-                self.menu_alarm_remove.retur(self)
+                self.menu_alarm_remove.retur(">")
 
         cmds = [
-            [self.menu_alarm_remove.retur, ["0", "return", "r", "x"], "Return"],
-            [remove, ["1", "ra", "remove", "remov alarm"], "Remove Alarm"],
+            [self.menu_alarm_remove.retur, ["0", "", "return", "r", "x"], "Return"],
+            [remove, ["1", "ra", "remove", "remove alarm"], "Remove Alarm"],
         ]
         self.menu_alarm_remove.menu(cmds)
 
@@ -145,14 +145,14 @@ class Menu_Display:
                 alarms = monitor.monitor_snapshot_alarm_list()
                 
                 text.clear()
-                text.text(f"Time: {timer}")
+                text.text(f"Time: {int(timer)}s")
                 text.option("CPU",  f"{cpu}%")
                 text.option("RAM",  f"{ram.percent}%")
                 text.option("DISK", f"{disk.percent}%")
                 
                 for alarm in alarms:
                     if float(alarm[1])>0:
-                        logger.appendlog(logger.path_action, text.fail("Alarm Triggered", f"{alarm[0]}: {alarm[1]}"))
+                        logger.appendlog(logger.path_action, f"Timestamp {timer}: "+text.fail("Alarm Triggered", f"{alarm[0]}: {alarm[1]}"))
                 text.nl()
                 text.text(f"{text.YELLOW}[Ctrl+C] to Return...{text.END}")
                 time.sleep(interval)
@@ -162,7 +162,7 @@ class Menu_Display:
                 #    monitor_display_active = False
             except KeyboardInterrupt:
                 monitor_display_active = False
-                logger.appendlog(logger.path_action, f"Monitor Time: {timer}")
+                logger.appendlog(logger.path_action, f"Monitor Time: {timer}s")
                 text.clear()
 
         text.clear() 
