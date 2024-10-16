@@ -37,7 +37,7 @@ class Menu_Display:
         logger.appendlog(logger.path_action, text.title("Start Monitor"))
         #test if monitor mode already ON
         if not monitor.monitor:
-            monitor.monitor = True
+            monitor.monitor_start()
             logger.appendlog(logger.path_action, "Monitor Mode ON")
             text.text(f"Monitor Mode: {text.GREEN}ON{text.END}")
             text.input("Enter key to Return...")
