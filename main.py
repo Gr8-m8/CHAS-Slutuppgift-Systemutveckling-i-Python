@@ -110,6 +110,7 @@ class Menu_Display:
             items = monitor.alarm_list()
             [text.option(items.index(item), f"{item[0]}: {item[1]}%") for item in items]
             status, alarm = index_input(monitor.alarm_list())
+            input()
             logger.appendlog(logger.path_action, status)
             if len(alarm)>0:
                 monitor.alarm_remove(alarm)
