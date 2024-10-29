@@ -115,13 +115,6 @@ class MenuNonBlocking(Menu):
             self.Draw()
             time.sleep(self.interval)
             self.streamtime+=self.interval
-
-
-    def Drop(self):
-        #
-        #self.streamtime = 0
-        self.menu_loop = False
-        return self
             
 
 class MenuInput(Menu):

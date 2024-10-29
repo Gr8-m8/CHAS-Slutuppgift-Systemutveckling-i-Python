@@ -55,7 +55,7 @@ class Monitor:
         if ram:
             try:
                 for alarm in self.alarms[alarmkeys[alarmindex]]:
-                    if float(ram.percent) > float(alarm[valueindex]) and float(alarms[alarmindex][valueindex] < float(alarm[valueindex])):
+                    if float(ram) > float(alarm[valueindex]) and float(alarms[alarmindex][valueindex] < float(alarm[valueindex])):
                         alarms[alarmindex] = alarm 
             except:
                 pass
@@ -63,7 +63,7 @@ class Monitor:
         if disk:
             try:
                 for alarm in self.alarms[alarmkeys[alarmindex]]:
-                    if float(disk.percent) > float(alarm[valueindex]) and float(alarms[alarmindex][valueindex] < float(alarm[valueindex])):
+                    if float(disk) > float(alarm[valueindex]) and float(alarms[alarmindex][valueindex] < float(alarm[valueindex])):
                         alarms[alarmindex] = alarm 
             except:
                 pass
