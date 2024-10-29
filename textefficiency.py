@@ -33,7 +33,7 @@ class text:
         print(text.END)
         CLEARACTIVE = True
         if CLEARACTIVE:
-            os.system('cls')
+            os.system('cls' if os.name == 'nt' else 'clear')
 
     #print new line
     @staticmethod

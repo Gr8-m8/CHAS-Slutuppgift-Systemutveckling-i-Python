@@ -1,5 +1,5 @@
 exec main.py
-require pip install: keyboard, psutil
+require pip install: psutil
 
 run builder.bat
     creates dist/Monitor.exe

@@ -24,4 +24,4 @@ class Logger:
     #formated date time str
     @staticmethod
     def datetime():
-        return f"{datetime.datetime.now().strftime('%Y-%m-%d_[%H-%M-%S]')}"
+        return f"{datetime.datetime.now().strftime('%Y-%m-%d [%H-%M-%S]')}"

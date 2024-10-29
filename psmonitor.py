@@ -1,7 +1,7 @@
 import psutil
 import time
-from lib.textefficiency import text
-from lib.saver import Saver
+from textefficiency import text
+from saver import Saver
 
 saver = Saver()
 #manage program functions
@@ -28,8 +28,8 @@ class Monitor:
         #get psutil data
         if self.monitor:
             cpu = psutil.cpu_percent() #[psutil.cpu_count(), psutil.cpu_freq() ,psutil.cpu_percent(), psutil.cpu_stats(), psutil.cpu_times(), psutil.cpu_times_percent()]
-            ram = psutil.swap_memory() #[psutil.swap_memory(), psutil.virtual_memory()]
-            disk = psutil.disk_usage("C:") #[psutil.disk_io_counters(), psutil.disk_partitions(), psutil.disk_usage("C:")]
+            ram = psutil.swap_memory().percent #[psutil.swap_memory(), psutil.virtual_memory()]
+            disk = psutil.disk_usage("C:").percent #[psutil.disk_io_counters(), psutil.disk_partitions(), psutil.disk_usage("C:")]
             return [cpu, ram, disk]
         return [None, None, None]
     
