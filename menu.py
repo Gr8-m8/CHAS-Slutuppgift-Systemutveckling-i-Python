@@ -132,7 +132,7 @@ class MenuInput(Menu):
     def Draw(self):
         text.clear()
         print(f"{self.text}{text.END}")
-        print(self.data) if self.data else None
+        print(f"> {self.data if self.data else ""}\033[107m \033[0m")
     
     def Update(self):
         while self.menu_loop:
