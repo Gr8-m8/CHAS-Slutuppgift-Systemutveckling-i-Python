@@ -48,8 +48,8 @@ class Main():
             
             cpu, ram, disk = self.monitor.monitor_snapshot_list()
 
-            self.logger.appendlog(self.logger.path_action, f"CPU: {cpu}% & RAM: {ram}% & Disk: {disk}%")
-            return f"CPU: {cpu}%\nRAM: {ram}%\nDisk: {disk}%"
+            self.logger.appendlog(self.logger.path_action, f"CPU at {cpu}% & RAM at {ram}% & Disk at {disk}%")
+            return f"CPU at {cpu}%\nRAM at {ram}%\nDisk at {disk}%"
 
         self.menuMonitorSnapshot: Menu = Menu("Monitor Snapshot", lambda: MonitorSnapshot())
         self.menuMonitorSnapshot.options = [
@@ -68,11 +68,11 @@ class Main():
                 return f"Could Not Set Alarm: '{data}' is not a number (float)"
             if 0<=data<=100:
                 self.monitor.alarm_add([key, data])
-                self.logger.appendlog(self.logger.path_action, f"Set Alarm {key}: {data}%")
-                return f"Set Alarm: {key}: {data}%" 
+                self.logger.appendlog(self.logger.path_action, f"Set Alarm: {key} at {data}%")
+                return f"Set Alarm: {key} at {data}%" 
             else:
-                self.logger.appendlog(self.logger.path_action, f"Could Not Set {key} Alarm: {data} Outside Range 0-100")
-                return f"Could Not Set {key} Alarm: {data} Outside Range 0-100"
+                self.logger.appendlog(self.logger.path_action, f"Could Not Set Alarm {key} at {data}. Outside Range 0-100 (%)")
+                return f"Could Not Set Alarm {key} at {data}. Outside Range 0-100"
             
         self.menuAlarmSetCPU: Menu = MenuInput("Set CPU Alarm: 0-100 (%)")
         self.menuAlarmSetCPU.options = [
@@ -96,8 +96,8 @@ class Main():
 
         def ListAlarm():
             self.logger.appendlog(self.logger.path_action, f"List Alarms")
-            self.logger.appendlog(self.logger.path_action, " & ".join([f"{i[0]}: {i[1]}%" for i in self.monitor.alarm_list()]))
-            return "\n".join([f"{i[0]}: {i[1]}%" for i in self.monitor.alarm_list()])
+            self.logger.appendlog(self.logger.path_action, " & ".join([f"{i[0]} at {i[1]}%" for i in self.monitor.alarm_list()]))
+            return "\n".join([f"{i[0]} at {i[1]}%" for i in self.monitor.alarm_list()])
         
         self.menuAlarmList: Menu = Menu("List Alarm", lambda: ListAlarm())
         self.menuAlarmList.options = [
@@ -117,13 +117,13 @@ class Main():
             rama = rama if rama[1] != -1 else None
             diska = diska if diska[1] != -1 else None
             #return f"{cpua}, {rama}, {diska}"
-            if cpua: self.logger.appendlog(self.logger.path_action, f"CPU Alarm Triggered: {cpua[0]}: {cpua[1]}% at {self.menuMonitorStream.streamtime}s Elapsed")
-            if rama: self.logger.appendlog(self.logger.path_action, f"CPU Alarm Triggered: {rama[0]}: {rama[1]}% at {self.menuMonitorStream.streamtime}s Elapsed")
-            if diska: self.logger.appendlog(self.logger.path_action, f"CPU Alarm Triggered: {diska[0]}: {diska[1]}% at {self.menuMonitorStream.streamtime}s Elapsed")
+            if cpua: self.logger.appendlog(self.logger.path_action, f"CPU Alarm Triggered: {cpua[0]} at {cpua[1]}%, {self.menuMonitorStream.streamtime}s Elapsed")
+            if rama: self.logger.appendlog(self.logger.path_action, f"CPU Alarm Triggered: {rama[0]} at {rama[1]}%, {self.menuMonitorStream.streamtime}s Elapsed")
+            if diska: self.logger.appendlog(self.logger.path_action, f"CPU Alarm Triggered: {diska[0]} at {diska[1]}%, {self.menuMonitorStream.streamtime}s Elapsed")
             timeprint = f"Session Time: {int(self.menuMonitorStream.streamtime)}s\n"
-            cpuprint = f"CPU: {cpu}% {f"Triggered Alarm {f"{cpua[0]}: {cpua[1]}%"}" if cpua else ""}\n"
-            ramprint = f"RAM: {ram}% {f"Triggered Alarm {f"{rama[0]}: {rama[1]}%"}" if rama else ""}\n"
-            diskprint = f"Disk: {disk}% {f"Triggered Alarm {f"{diska[0]}: {diska[1]}%"}" if diska else ""}\n"
+            cpuprint = f"CPU at {cpu}% {f"Triggered Alarm: {f"{cpua[0]} at {cpua[1]}%"}" if cpua else ""}\n"
+            ramprint = f"RAM at {ram}% {f"Triggered Alarm: {f"{rama[0]} at {rama[1]}%"}" if rama else ""}\n"
+            diskprint = f"Disk at {disk}% {f"Triggered Alarm: {f"{diska[0]} at {diska[1]}%"}" if diska else ""}\n"
             return timeprint+cpuprint+ramprint+diskprint
             
         self.menuMonitorStream: Menu = MenuNonBlocking("Monitor Stream", lambda: MonitorStream())
