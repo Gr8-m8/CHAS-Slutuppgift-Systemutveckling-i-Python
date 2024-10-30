@@ -4,6 +4,7 @@ from textefficiency import text
 import os
 import time
 
+#Interactable menu options
 class MenuOption:
     def __init__(self, text = "", action = None) -> None:
         self.text: str = text
@@ -12,6 +13,7 @@ class MenuOption:
     def Activate(self):
         return self.action() if self.action else None
 
+#Menu Class
 class Menu:
     def __init__(self, text = "", getdata = None) -> None:
         self.text:str = text
@@ -73,6 +75,7 @@ class Menu:
 
                     self.Draw()
 
+#
 class MenuNonBlocking(Menu):
     def __init__(self, text="", getdata=None) -> None:
         super().__init__(text, getdata)
@@ -89,6 +92,7 @@ class MenuNonBlocking(Menu):
             self.data = self.getdata() if self.getdata else None
             key = getch.readkey()
             
+            skipwait = False
             KEYS_ARROW = [b'H', b'P']
             KEYS_RETURN = [b'\r', b'\n']
             KEYS_ESC = [b'\x1b']
@@ -110,11 +114,15 @@ class MenuNonBlocking(Menu):
 
                     if key in KEYS_ESC:
                         self.menu_loop = False
+                    skipwait = True
 
-
-            self.Draw()
-            time.sleep(self.interval)
-            self.streamtime+=self.interval
+            if skipwait:
+                self.Draw()
+            else:
+                self.Draw()
+                time.sleep(self.interval)
+                self.streamtime+=self.interval
+            
             
 
 class MenuInput(Menu):
