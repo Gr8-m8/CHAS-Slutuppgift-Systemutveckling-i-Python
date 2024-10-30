@@ -3,6 +3,7 @@ import os
 import datetime
 import json
 import psutil
+import math
 
 from textefficiency import text
 from logger import Logger
@@ -122,9 +123,13 @@ class Main():
             if diska: self.logger.appendlog(self.logger.path_action, f"CPU Alarm Triggered: {diska[0]} at {diska[1]}%, {self.menuMonitorStream.streamtime}s Elapsed")
             timeprint = f"Session Time: {int(self.menuMonitorStream.streamtime)}s\n"
             cpuprint = f"CPU at {cpu}% {f"Triggered Alarm: {f"{cpua[0]} at {cpua[1]}%"}" if cpua else ""}\n"
+
+            cpuprintL = text.BGRED+"".ljust(math.floor(cpu), "*")+text.BGGREEN+"".ljust(math.ceil(100-cpu),"-")+f"{text.END}\n"
             ramprint = f"RAM at {ram}% {f"Triggered Alarm: {f"{rama[0]} at {rama[1]}%"}" if rama else ""}\n"
+            ramprintL = text.BGRED+"".ljust(math.floor(ram), "*")+text.BGGREEN+"".ljust(math.ceil(100-ram),"-")+f"{text.END}\n"
             diskprint = f"Disk at {disk}% {f"Triggered Alarm: {f"{diska[0]} at {diska[1]}%"}" if diska else ""}\n"
-            return timeprint+cpuprint+ramprint+diskprint
+            diskprintL = text.BGRED+"".ljust(math.floor(disk), "*")+text.BGGREEN+"".ljust(math.ceil(100-disk),"-")+f"{text.END}\n"
+            return timeprint+cpuprint+cpuprintL+ramprint+ramprintL+diskprint+diskprintL
             
         self.menuMonitorStream: Menu = MenuNonBlocking("Monitor Stream", lambda: MonitorStream())
         self.menuMonitorStream.options = [
