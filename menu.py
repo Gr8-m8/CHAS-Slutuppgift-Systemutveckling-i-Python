@@ -78,6 +78,10 @@ class Menu:
 
 
                     self.Draw()
+    
+    def PopOption(self, optionindex):
+        self.options.pop(optionindex)
+        self.cursor = min(self.cursor, len(self.options)-1)
 
 #
 class MenuNonBlocking(Menu):
