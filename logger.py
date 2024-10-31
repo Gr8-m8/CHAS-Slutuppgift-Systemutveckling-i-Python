@@ -14,7 +14,13 @@ class Logger:
         
 
     #add to logfile
-    def appendlog(self, path, content):
+    def appendlog(self, path=None, content=None):
+        if not content:
+            return content
+        
+        if not path:
+            path = self.path_action
+
         if self.LOGACTIVE:
             log = open(path, "a")
             log.write(f"[{Logger.datetime()}] {content}\n")
