@@ -27,6 +27,12 @@ class Menu:
 
         self.menu_loop = True
 
+        self.KEYS_MOVE = [b'H', b'P'] #menu move options
+        self.KEYS_MOVE_INDEX= b'1234567890' #menu move options, to index
+        self.KEYS_ACTIVATE = [b'\r', b'\n', b' '] #menu activate options
+        self.KEYS_ESC = [b'\x1b'] #menu leave menu
+        self.KEYS = self.KEYS_MOVE+self.KEYS_ACTIVATE+self.KEYS_ESC
+
     def Get(self):
         self.logger.appendlog(content=f"In Menu: {self.text}")
         self.data = self.getdata() if self.getdata else None
@@ -52,33 +58,33 @@ class Menu:
     def Update(self):
         while self.menu_loop:
             key = getch.readkey()
-            
-            KEYS_ARROW = [b'H', b'P']
-            KEYS_RETURN = [b'\r', b'\n']
-            KEYS_ESC = [b'\x1b']
-            KEYS_NUMBERS= b'1234567890'
-            KEYS = KEYS_ARROW+KEYS_RETURN+KEYS_ESC
+
             if key != b'':
-                if key in KEYS or key in KEYS_NUMBERS:
-                    if key in KEYS_ARROW:
-                        if key == b'H':
-                            self.cursor = (self.cursor-1)%len(self.options)
-                        if key == b'P':
-                            self.cursor = (self.cursor+1)%len(self.options)
-                    
-                    if key in KEYS_NUMBERS:
-                        self.cursor = int(key.decode())%len(self.options)
-
-                    if key in KEYS_RETURN:
-                        self.logger.appendlog(content=f"In Menu: {self.text}: selected option {self.cursor} {self.options[self.cursor].text}")
-                        self.options[self.cursor].Activate() if len(self.options)>0 else None
-
-                    if key in KEYS_ESC:
-                        self.menu_loop = False
-
-
-                    self.Draw()
+                self.Draw() if self.keyaction(key) else None
+     
     
+    def keyaction(self, key):
+        if key in self.KEYS or key in self.KEYS_MOVE_INDEX:
+            if key in self.KEYS_MOVE:
+                if key == b'H':
+                    self.cursor = (self.cursor-1)%len(self.options)
+                if key == b'P':
+                    self.cursor = (self.cursor+1)%len(self.options)
+
+            if key in self.KEYS_MOVE_INDEX:
+                self.cursor = int(key.decode())%len(self.options)
+
+            if key in self.KEYS_ACTIVATE:
+                self.logger.appendlog(content=f"In Menu: {self.text}: selected option {self.cursor} {self.options[self.cursor].text}")
+                self.options[self.cursor].Activate() if len(self.options)>0 else None
+                
+            if key in self.KEYS_ESC:
+                self.menu_loop = False
+            
+            return True
+        return False
+
+
     def PopOption(self, optionindex):
         self.options.pop(optionindex)
         self.cursor = min(self.cursor, len(self.options)-1)
@@ -101,29 +107,9 @@ class MenuNonBlocking(Menu):
             key = getch.readkey()
             
             skipwait = False
-            KEYS_ARROW = [b'H', b'P']
-            KEYS_RETURN = [b'\r', b'\n']
-            KEYS_ESC = [b'\x1b']
-            KEYS_NUMBERS= b'1234567890'
-            KEYS = KEYS_ARROW+KEYS_RETURN+KEYS_ESC
+            
             if key != b'':
-                if key in KEYS or key in KEYS_NUMBERS:
-                    if key in KEYS_ARROW:
-                        if key == b'H':
-                            self.cursor = (self.cursor-1)%len(self.options)
-                        if key == b'P':
-                            self.cursor = (self.cursor+1)%len(self.options)
-                    
-                    if key in KEYS_NUMBERS:
-                        self.cursor = int(key.decode())%len(self.options)
-
-                    if key in KEYS_RETURN:
-                        self.logger.appendlog(content=f"In Menu: {self.text}: selected option {self.cursor} {self.options[self.cursor].text}")
-                        self.options[self.cursor].Activate() if len(self.options)>0 else None
-
-                    if key in KEYS_ESC:
-                        self.menu_loop = False
-                    skipwait = True
+                skipwait = self.keyaction(key)
 
             if skipwait:
                 self.Draw()
@@ -137,6 +123,11 @@ class MenuNonBlocking(Menu):
 class MenuInput(Menu):
     def __init__(self, text="", getdata=None, logger = None) -> None:
         super().__init__(text, None, logger)
+        self.KEYS_BACKSPACE = [b'\x08', b'\x7f']
+        self.KEYS_NUMBERS = b'1234567890'
+        self.KEYS_DECIMAL = b',.'
+        self.KEYS_INPUT = self.KEYS_NUMBERS+self.KEYS_DECIMAL
+        self.KEYS += self.KEYS_BACKSPACE
     
     def Get(self):
         self.logger.appendlog(content=f"In Menu: {self.text}")
@@ -152,37 +143,29 @@ class MenuInput(Menu):
         print(f"{self.text}{text.END}")
         print(f"> {self.data if self.data else ""}\033[107m \033[0m")
     
-    def Update(self):
-        while self.menu_loop:
-            key = getch.readkey()
-            KEYS_RETURN = [b'\r', b'\n']
-            KEYS_ESC = [b'\x1b']
-            KEYS_BACKSPACE = [b'\x08', b'\x7f']
-            KEYS_NUMBERS = b'1234567890'
-            KEYS_DECIMAL = b',.'
-            KEYS = KEYS_RETURN+KEYS_ESC+KEYS_BACKSPACE
-            if key != b'':
-                if key in KEYS or key in KEYS_NUMBERS or key in KEYS_DECIMAL:
-                    if key in KEYS_NUMBERS:
-                        self.data += key.decode()
+    def keyaction(self, key):
+        if key in self.KEYS or key in self.KEYS_INPUT:
+            if key in self.KEYS_NUMBERS:
+                self.data += key.decode()
 
-                    if key in KEYS_DECIMAL:
-                        decimal = '.'
-                        if not decimal in self.data:
-                            self.data += decimal
+            if key in self.KEYS_DECIMAL:
+                decimal = '.'
+                if not decimal in self.data:
+                    self.data += decimal
 
-                    if key in KEYS_BACKSPACE:
-                        self.data = self.data[:-1]
+            if key in self.KEYS_BACKSPACE:
+                self.data = self.data[:-1]
 
-                    if key in KEYS_ESC:
-                        if self.data:
-                            self.data = ""
-                        else:
-                            self.menu_loop = False
+            if key in self.KEYS_ESC:
+                if self.data:
+                    self.data = ""
+                else:
+                    self.menu_loop = False
 
-                    if key in KEYS_RETURN:
-                        self.logger.appendlog(content=f"In Menu: {self.text}: input value {self.data} at {self.options[self.cursor].text}")
-                        self.options[self.cursor].Activate() if len(self.options)>0 else None
-                        self.menu_loop = False
-                
-                self.Draw()
+            if key in self.KEYS_ACTIVATE:
+                self.logger.appendlog(content=f"In Menu: {self.text}: input value {self.data} at {self.options[self.cursor].text}")
+                self.options[self.cursor].Activate() if len(self.options)>0 else None
+                self.menu_loop = False
+            
+            return True
+        return False
