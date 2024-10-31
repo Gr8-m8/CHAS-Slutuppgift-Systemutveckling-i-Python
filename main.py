@@ -46,14 +46,11 @@ class Main():
             MenuOption("Confirm", lambda: self.menuStartMonitor.Drop()),
         ]
 
-
         #MONITOR SNAPSHOT MENU
         self.menuMonitorSnapshot: Menu = Menu("Monitor Snapshot", lambda: self.MonitorSnapshot(), logger=self.logger)
         self.menuMonitorSnapshot.options = [
             MenuOption("Return", lambda: self.menuMonitorSnapshot.Drop()),
         ]
-        
-        
         
         #ADD ALARM MENU(S)
         self.menuAlarmSetCPU: Menu = MenuInput("Set CPU Alarm: 0-100 (%)", logger=self.logger)
@@ -82,8 +79,6 @@ class Main():
             MenuOption("Return", lambda: self.menuAlarmList.Drop()),
         ]
 
-        
-        
         #MONITOR STREAM MENU
         self.menuMonitorStream: Menu = MenuNonBlocking("Monitor Stream", lambda: self.MonitorStream(), logger=self.logger)
         self.menuMonitorStream.options = [
@@ -181,6 +176,4 @@ class Main():
         diskprintL = text.BGRED+"".ljust(math.floor(disk), "*")+text.BGGREEN+"".ljust(math.ceil(100-disk),"-")+f"{text.END}\n"
         return timeprint+cpuprint+cpuprintL+ramprint+ramprintL+diskprint+diskprintL
 
-#try:
 main = Main()
-#except Exception as e: print(e)
