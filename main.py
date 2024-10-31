@@ -13,12 +13,18 @@ from menu import Menu, MenuOption, MenuInput, MenuNonBlocking
 class Main():
     def __init__(self):
         self.logger = Logger()
+        self.logger.appendlog(content=f"LOAD LOGGER")
         self.monitor = Monitor()
+        self.logger.appendlog(content=f"LOAD MONITOR")
 
         self.Menus() #Init Menus
+        self.logger.appendlog(content=f"LOAD MENUS")
         
-        print("\033[?25l") #Hide cursor
+        print("\033[?25l") #Hide real cursor
+        self.logger.appendlog(content=f"START")
         self.menu:Menu = self.menuMain.Get() #load Menu, Update loop
+        self.logger.appendlog(content=f"END")
+        print("\033[?25h") #Show real cursor
         text.clear() #Clear on Quit
     
     def Menus(self):
