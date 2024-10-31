@@ -77,8 +77,9 @@ class Menu:
             if key in self.KEYS_ACTIVATE:
                 self.logger.appendlog(content=f"In Menu: {self.text}: selected option {self.cursor} {self.options[self.cursor].text}")
                 self.options[self.cursor].Activate() if len(self.options)>0 else None
-                
+
             if key in self.KEYS_ESC:
+                self.logger.appendlog(content=f"In Menu: {self.text}: ESC Menu")
                 self.menu_loop = False
             
             return True
@@ -161,6 +162,7 @@ class MenuInput(Menu):
                     self.data = ""
                 else:
                     self.menu_loop = False
+                    self.logger.appendlog(content=f"In Menu: {self.text}: ESC Menu")
 
             if key in self.KEYS_ACTIVATE:
                 self.logger.appendlog(content=f"In Menu: {self.text}: input value {self.data} at {self.options[self.cursor].text}")
