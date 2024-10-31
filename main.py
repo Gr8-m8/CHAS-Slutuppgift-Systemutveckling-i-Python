@@ -15,7 +15,7 @@ class Main():
         self.logger = Logger()
         self.monitor = Monitor()
 
-        self.menuMain:Menu = Menu("Select Option")
+        self.menuMain:Menu = Menu("Select Option", logger=self.logger)
         self.menuMain.options = [
             MenuOption("Exit", lambda: self.menuMain.Drop()),
             MenuOption("Start Monitor", lambda: self.menuSet(self.menuStartMonitor)) ,
@@ -28,66 +28,66 @@ class Main():
         ]
         
         def MonitorStart():
-            self.logger.appendlog(self.logger.path_action, "Start Monitor")
+            self.logger.appendlog(content="Start Monitor")
             if not self.monitor.monitor: 
-                self.logger.appendlog(self.logger.path_action, "Monitor Is On")
+                self.logger.appendlog(content="Monitor Is On")
                 self.monitor.monitor_start()
                 return "Monitor Is ON"
             else:
-                self.logger.appendlog(self.logger.path_action, "Monitor Is Already On")
+                self.logger.appendlog(content="Monitor Is Already On")
                 return "Monitor Is Already ON"
-        self.menuStartMonitor:Menu = Menu("Start Monitor", lambda: MonitorStart())
+        self.menuStartMonitor:Menu = Menu("Start Monitor", lambda: MonitorStart(), logger=self.logger)
         self.menuStartMonitor.options = [
             MenuOption("Confirm", lambda: self.menuStartMonitor.Drop()),
         ]
 
         def MonitorSnapshot():
-            self.logger.appendlog(self.logger.path_action, "Monitor Snapshot")
+            self.logger.appendlog(content="Monitor Snapshot")
             if not self.monitor.monitor:
-                self.logger.appendlog(self.logger.path_action, "Monitor Is Not ON")
+                self.logger.appendlog(content="Monitor Is Not ON")
                 return "Monitor Is Not ON"
             
             cpu, ram, disk = self.monitor.monitor_snapshot_list()
 
-            self.logger.appendlog(self.logger.path_action, f"CPU at {cpu}% & RAM at {ram}% & Disk at {disk}%")
+            self.logger.appendlog(content=f"CPU at {cpu}% & RAM at {ram}% & Disk at {disk}%")
             return f"CPU at {cpu}%\nRAM at {ram}%\nDisk at {disk}%"
 
-        self.menuMonitorSnapshot: Menu = Menu("Monitor Snapshot", lambda: MonitorSnapshot())
+        self.menuMonitorSnapshot: Menu = Menu("Monitor Snapshot", lambda: MonitorSnapshot(), logger=self.logger)
         self.menuMonitorSnapshot.options = [
             MenuOption("Return", lambda: self.menuMonitorSnapshot.Drop()),
         ]
         
         def AddAlarm(key = None, data = None):
-            self.logger.appendlog(self.logger.path_action, "Alarm Set")
+            self.logger.appendlog(content="Alarm Set")
             if not (key and data):
-                self.logger.appendlog(self.logger.path_action, f"Could Not Set Alarm: key is '{key}' data is '{data}'")
+                self.logger.appendlog(content=f"Could Not Set Alarm: key is '{key}' data is '{data}'")
                 return None
             try:
                 data = float(data)
             except:
-                self.logger.appendlog(self.logger.path_action, "")
+                self.logger.appendlog(content=f"Could Not Set Alarm: '{data}' is not a number (float)")
                 return f"Could Not Set Alarm: '{data}' is not a number (float)"
             if 0<=data<=100:
                 self.monitor.alarm_add([key, data])
-                self.logger.appendlog(self.logger.path_action, f"Set Alarm: {key} at {data}%")
+                self.logger.appendlog(content=f"Set Alarm: {key} at {data}%")
                 return f"Set Alarm: {key} at {data}%" 
             else:
-                self.logger.appendlog(self.logger.path_action, f"Could Not Set Alarm {key} at {data}. Outside Range 0-100 (%)")
+                self.logger.appendlog(content=f"Could Not Set Alarm {key} at {data}. Outside Range 0-100 (%)")
                 return f"Could Not Set Alarm {key} at {data}. Outside Range 0-100"
             
-        self.menuAlarmSetCPU: Menu = MenuInput("Set CPU Alarm: 0-100 (%)")
+        self.menuAlarmSetCPU: Menu = MenuInput("Set CPU Alarm: 0-100 (%)", logger=self.logger)
         self.menuAlarmSetCPU.options = [
             MenuOption("Confirm", lambda: self.menuSetData(self.menuAlarmSet, AddAlarm(self.monitor.KEY_CPU, self.menuAlarmSetCPU.data)))
         ]
-        self.menuAlarmSetRAM: Menu = MenuInput("Set RAM Alarm: 0-100 (%)")
+        self.menuAlarmSetRAM: Menu = MenuInput("Set RAM Alarm: 0-100 (%)", logger=self.logger)
         self.menuAlarmSetRAM.options = [
             MenuOption("Confirm", lambda: self.menuSetData(self.menuAlarmSet, AddAlarm(self.monitor.KEY_RAM, self.menuAlarmSetRAM.data)))
         ]
-        self.menuAlarmSetDISK: Menu = MenuInput("Set Disk Alarm: 0-100 (%)")
+        self.menuAlarmSetDISK: Menu = MenuInput("Set Disk Alarm: 0-100 (%)", logger=self.logger)
         self.menuAlarmSetDISK.options = [
             MenuOption("Confirm", lambda: self.menuSetData(self.menuAlarmSet, AddAlarm(self.monitor.KEY_DISK, self.menuAlarmSetDISK.data)))
         ]
-        self.menuAlarmSet: Menu = Menu("Set Alarm")
+        self.menuAlarmSet: Menu = Menu("Set Alarm", logger=self.logger)
         self.menuAlarmSet.options = [
             MenuOption("Return", lambda: self.menuAlarmSet.Drop()),
             MenuOption("Set CPU Alarm", lambda: self.menuSet(self.menuAlarmSetCPU)),
@@ -96,20 +96,20 @@ class Main():
         ]
 
         def ListAlarm():
-            self.logger.appendlog(self.logger.path_action, f"List Alarms")
-            self.logger.appendlog(self.logger.path_action, " & ".join([f"{i[0]} at {i[1]}%" for i in self.monitor.alarm_list()]))
+            self.logger.appendlog(content=f"List Alarms")
+            self.logger.appendlog(content=" & ".join([f"{i[0]} at {i[1]}%" for i in self.monitor.alarm_list()]))
             return "\n".join([f"{i[0]} at {i[1]}%" for i in self.monitor.alarm_list()])
         
-        self.menuAlarmList: Menu = Menu("List Alarm", lambda: ListAlarm())
+        self.menuAlarmList: Menu = Menu("List Alarm", lambda: ListAlarm(), logger=self.logger)
         self.menuAlarmList.options = [
             MenuOption("Return", lambda: self.menuAlarmList.Drop()),
         ]
 
         self.streamtime = 0
         def MonitorStream():
-            self.logger.appendlog(self.logger.path_action, "Monitor Stream") if self.menuMonitorStream.streamtime == 0 else None
+            self.logger.appendlog(content="Monitor Stream") if self.menuMonitorStream.streamtime == 0 else None
             if not self.monitor.monitor:
-                self.logger.appendlog(self.logger.path_action, "Monitor Is Not ON") if self.menuMonitorStream.streamtime == 0 else None
+                self.logger.appendlog(content="Monitor Is Not ON") if self.menuMonitorStream.streamtime == 0 else None
                 return "Monitor Is Not ON"
             
             cpu, ram, disk = self.monitor.monitor_snapshot_list()
@@ -118,9 +118,9 @@ class Main():
             rama = rama if rama[1] != -1 else None
             diska = diska if diska[1] != -1 else None
             #return f"{cpua}, {rama}, {diska}"
-            if cpua: self.logger.appendlog(self.logger.path_action, f"CPU Alarm Triggered: {cpua[0]} at {cpua[1]}%, {self.menuMonitorStream.streamtime}s Elapsed")
-            if rama: self.logger.appendlog(self.logger.path_action, f"CPU Alarm Triggered: {rama[0]} at {rama[1]}%, {self.menuMonitorStream.streamtime}s Elapsed")
-            if diska: self.logger.appendlog(self.logger.path_action, f"CPU Alarm Triggered: {diska[0]} at {diska[1]}%, {self.menuMonitorStream.streamtime}s Elapsed")
+            if cpua: self.logger.appendlog(content=f"CPU Alarm Triggered: {cpua[0]} at {cpua[1]}%, {self.menuMonitorStream.streamtime}s Elapsed")
+            if rama: self.logger.appendlog(content=f"RAM Alarm Triggered: {rama[0]} at {rama[1]}%, {self.menuMonitorStream.streamtime}s Elapsed")
+            if diska: self.logger.appendlog(content=f"Disk Alarm Triggered: {diska[0]} at {diska[1]}%, {self.menuMonitorStream.streamtime}s Elapsed")
             timeprint = f"Session Time: {int(self.menuMonitorStream.streamtime)}s\n"
             cpuprint = f"CPU at {cpu}% {f"Triggered Alarm: {f"{cpua[0]} at {cpua[1]}%"}" if cpua else ""}\n"
 
@@ -131,13 +131,13 @@ class Main():
             diskprintL = text.BGRED+"".ljust(math.floor(disk), "*")+text.BGGREEN+"".ljust(math.ceil(100-disk),"-")+f"{text.END}\n"
             return timeprint+cpuprint+cpuprintL+ramprint+ramprintL+diskprint+diskprintL
             
-        self.menuMonitorStream: Menu = MenuNonBlocking("Monitor Stream", lambda: MonitorStream())
+        self.menuMonitorStream: Menu = MenuNonBlocking("Monitor Stream", lambda: MonitorStream(), logger=self.logger)
         self.menuMonitorStream.options = [
             MenuOption("Return", lambda: self.menuMonitorStream.Drop()),
         ]
 
         def RemoveAlarm(menuindex):
-            self.logger.appendlog(self.logger.path_action, f"Alarm Removed: {self.monitor.alarm_list()[menuindex-1]}")
+            self.logger.appendlog(content=f"Alarm Removed: {" at".join(str(self.monitor.alarm_list()[menuindex-1])[1:-1].replace("'", "").split(','))}%")
             self.menuAlarmRemove.options.pop(menuindex)
             self.monitor.alarm_remove(self.monitor.alarm_list()[menuindex-1])
             self.menuAlarmRemove.cursor = min(self.menuAlarmRemove.cursor, len(self.menuAlarmRemove.options)-1)
@@ -152,7 +152,7 @@ class Main():
                 self.menuAlarmRemove.options.append(MenuOption(f"{alarm[0]}, {alarm[1]}", lambda: RemoveAlarm(self.menuAlarmRemove.cursor)))
                 self.menuAlarmRemove.Drop()
 
-        self.menuAlarmRemove: Menu = Menu("Remove Alarm", lambda: RemoveAlarmData())
+        self.menuAlarmRemove: Menu = Menu("Remove Alarm", lambda: RemoveAlarmData(), logger=self.logger)
         self.menuAlarmRemove.options = [
             MenuOption("Return", lambda: self.menuAlarmRemove.Drop()),
         ]

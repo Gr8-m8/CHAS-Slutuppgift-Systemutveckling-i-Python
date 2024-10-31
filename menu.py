@@ -1,5 +1,6 @@
 from keyboard import getch
 from textefficiency import text
+from logger import Logger
 
 import os
 import time
@@ -15,7 +16,8 @@ class MenuOption:
 
 #Menu Class
 class Menu:
-    def __init__(self, text = "", getdata = None) -> None:
+    def __init__(self, text = "", getdata = None, logger = None) -> None:
+        self.logger: Logger = logger
         self.text:str = text
         self.getdata = getdata
         self.data = None #self.getdata() if self.getdata else None
@@ -26,6 +28,7 @@ class Menu:
         self.menu_loop = True
 
     def Get(self):
+        self.logger.appendlog(content=f"In Menu: {self.text}")
         self.data = self.getdata() if self.getdata else None
         self.cursor = 1 if len(self.options)>1 else 0
         self.menu_loop = True
@@ -67,6 +70,7 @@ class Menu:
                         self.cursor = int(key.decode())%len(self.options)
 
                     if key in KEYS_RETURN:
+                        self.logger.appendlog(content=f"In Menu: {self.text}: selected option {self.cursor} {self.options[self.cursor].text}")
                         self.options[self.cursor].Activate() if len(self.options)>0 else None
 
                     if key in KEYS_ESC:
@@ -77,8 +81,8 @@ class Menu:
 
 #
 class MenuNonBlocking(Menu):
-    def __init__(self, text="", getdata=None) -> None:
-        super().__init__(text, getdata)
+    def __init__(self, text="", getdata=None, logger = None) -> None:
+        super().__init__(text, getdata, logger)
         self.interval: float = 0.25
         self.streamtime = 0
 
@@ -110,6 +114,7 @@ class MenuNonBlocking(Menu):
                         self.cursor = int(key.decode())%len(self.options)
 
                     if key in KEYS_RETURN:
+                        self.logger.appendlog(content=f"In Menu: {self.text}: selected option {self.cursor} {self.options[self.cursor].text}")
                         self.options[self.cursor].Activate() if len(self.options)>0 else None
 
                     if key in KEYS_ESC:
@@ -126,10 +131,11 @@ class MenuNonBlocking(Menu):
             
 
 class MenuInput(Menu):
-    def __init__(self, text="", getdata=None) -> None:
-        super().__init__(text, None)
+    def __init__(self, text="", getdata=None, logger = None) -> None:
+        super().__init__(text, None, logger)
     
     def Get(self):
+        self.logger.appendlog(content=f"In Menu: {self.text}")
         self.data = self.getdata() if self.getdata else ""
         self.cursor = 1 if len(self.options)>1 else 0
         self.menu_loop = True
@@ -171,6 +177,7 @@ class MenuInput(Menu):
                             self.menu_loop = False
 
                     if key in KEYS_RETURN:
+                        self.logger.appendlog(content=f"In Menu: {self.text}: input value {self.data} at {self.options[self.cursor].text}")
                         self.options[self.cursor].Activate() if len(self.options)>0 else None
                         self.menu_loop = False
                 
